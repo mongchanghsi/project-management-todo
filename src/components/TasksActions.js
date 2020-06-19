@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { AddButton, DelButton, BackToMenu, CreateFolderButton, DelButton2, AddTask, AddTask2 } from './Buttons';
+import { AddButton, DelButton, BackToMenu, CreateFolderButton, DelButton2, AddTask } from './Buttons';
 import { withStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
@@ -38,31 +38,24 @@ class TasksActions extends Component {
       showEdit: true,
       showCreateTaskFolder: false,
       showDeleteTaskFolder: false,
-      showCreateTask: false
     };
     this.onCreateTaskFolder = this.onCreateTaskFolder.bind(this);
     this.onDeleteTaskFolder = this.onDeleteTaskFolder.bind(this);
-    this.onCreateTask = this.onCreateTask.bind(this);
     this.onBack = this.onBack.bind(this);
     this.onChangeFolderName = this.onChangeFolderName.bind(this);
     this.handleRadioChange = this.handleRadioChange.bind(this);
-    this.onChangeTaskName = this.onChangeTaskName.bind(this);
   }
 
   onCreateTaskFolder(){
-    this.setState({ showCreateTaskFolder: true, showDeleteTaskFolder: false, showCreateTask: false, showEdit: false })
+    this.setState({ showCreateTaskFolder: true, showDeleteTaskFolder: false, showEdit: false })
   }
 
   onDeleteTaskFolder(){
-    this.setState({ showCreateTaskFolder: false, showDeleteTaskFolder: true, showCreateTask: false, showEdit: false })
+    this.setState({ showCreateTaskFolder: false, showDeleteTaskFolder: true, showEdit: false })
   }
 
   onBack(){
-    this.setState({ showCreateTaskFolder: false, showDeleteTaskFolder: false, showCreateTask: false, showEdit: true })
-  }
-
-  onCreateTask(){
-    this.setState({ showCreateTaskFolder: false, showDeleteTaskFolder: false, showCreateTask: true, showEdit: false })
+    this.setState({ showCreateTaskFolder: false, showDeleteTaskFolder: false, showEdit: true })
   }
 
   onChangeFolderName(e){
@@ -73,10 +66,6 @@ class TasksActions extends Component {
     this.props.updateTaskFolder(e.target.value)
   }
 
-  onChangeTaskName(e){
-    this.props.updateNewTaskName(e.target.value)
-  }
-
   render(){
     const { classes } = this.props;
     return(
@@ -84,7 +73,6 @@ class TasksActions extends Component {
         { this.state.showEdit ?
           <div>
             <AddButton onClick={this.onCreateTaskFolder}/>
-            <AddTask onClick={this.onCreateTask}/>
             <DelButton onClick={this.onDeleteTaskFolder}/>
           </div>
         : null }
@@ -118,28 +106,6 @@ class TasksActions extends Component {
               </FormControl>
             </CardContent>
             <DelButton2 onClick={()=>{this.onBack(); this.props.deleteTaskFolder();}}/>
-            <BackToMenu onBack={this.onBack}/>
-          </Card>
-        : null }
-
-        { this.state.showCreateTask ?
-          <Card className={classes.root}>
-            <CardContent>
-              <Typography className={classes.title} color='textSecondary' gutterBottom>
-                Create a task
-              </Typography>
-              <FormControl component="fieldset">
-                <FormLabel component="legend">Select Task Folder</FormLabel>
-                <RadioGroup aria-label="taskfolder" name="taskfolder" onChange={this.handleRadioChange}>
-                  { this.props.folders.map((folder) =>
-                    <FormControlLabel value={folder} control={<Radio />} label={folder} />
-                  )}
-                </RadioGroup>
-              </FormControl>
-            </CardContent>
-            <TextField className={classes.margin} id="taskname" label="Task Name" variant="outlined" onChange={this.onChangeTaskName}/>
-            <br/>
-            <AddTask2 onClick={()=>{this.onBack(); this.props.createNewTask();}}/>
             <BackToMenu onBack={this.onBack}/>
           </Card>
         : null }

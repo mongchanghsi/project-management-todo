@@ -23,12 +23,10 @@ class Content extends Component {
       folderName: folders,
       tasks: tasks,
       newFolderName: '',
-      updateTaskFolder: '',
-      newTaskName: ''
+      updateTaskFolder: ''
     };
     this.updateNewFolderName = this.updateNewFolderName.bind(this);
     this.createNewFolder = this.createNewFolder.bind(this);
-    this.updateNewTaskName = this.updateNewTaskName.bind(this);
     this.updateTaskFolder = this.updateTaskFolder.bind(this);
     this.createNewTask = this.createNewTask.bind(this);
     this.deleteTaskFolder = this.deleteTaskFolder.bind(this);
@@ -36,7 +34,7 @@ class Content extends Component {
   }
 
   updateNewFolderName(value){
-    this.setState({ newFolderName: value }, ()=> console.log(this.state))
+    this.setState({ newFolderName: value })
   }
 
   createNewFolder(){
@@ -56,24 +54,20 @@ class Content extends Component {
     this.setState({ updateTaskFolder: value })
   }
 
-  updateNewTaskName(value){
-    this.setState({ newTaskName: value })
-  }
-
-  createNewTask(){
+  createNewTask(title, taskName){
     let tasks = this.state.tasks
     let proneToUpdateTaskList;
 
     for (let i=0; i<tasks.length; i++){
-      if (tasks[i].title == this.state.updateTaskFolder){
+      if (tasks[i].title == title){
         proneToUpdateTaskList = tasks[i].tasks
-        proneToUpdateTaskList.push(this.state.newTaskName)
+        proneToUpdateTaskList.push(taskName)
         tasks[i].tasks = proneToUpdateTaskList
         break
       }
     }
 
-    this.setState({ tasks: tasks })
+    this.setState({ tasks: tasks, newTaskName: '' })
   }
 
   deleteTaskFolder(){
@@ -102,7 +96,6 @@ class Content extends Component {
       }
     }
     this.setState({ tasks: tasks })
-
   }
 
   render(){
@@ -114,16 +107,14 @@ class Content extends Component {
             updateNewFolderName={this.updateNewFolderName}
             createNewFolder={this.createNewFolder}
             updateTaskFolder={this.updateTaskFolder}
-            updateNewTaskName={this.updateNewTaskName}
             folders={this.state.folderName}
-            createNewTask={this.createNewTask}
             deleteTaskFolder={this.deleteTaskFolder}
           />
         </div>
         <Grid container spacing={5}>
         { this.state.tasks.map((task, index) =>
           <Grid item xs={12} sm={6} md={4} lg={3} id={index}>
-            <Item deleteTask={this.deleteTask} taskDetails={task} />
+            <Item deleteTask={this.deleteTask} taskDetails={task} updateNewTaskName={this.updateNewTaskName} createNewTask={this.createNewTask} newTaskName={this.state.newTaskName}/>
           </Grid>
         )}
         </Grid>

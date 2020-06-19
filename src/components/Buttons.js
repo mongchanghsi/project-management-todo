@@ -58,8 +58,3 @@ export function AddTask(props){
   const classes = useStyles();
   return <Button variant='contained' className={classes.addButton} startIcon={<AddIcon/>} onClick={props.onClick}> Add Task </Button>
 }
-
-export function AddTask2(props){
-  const classes = useStyles();
-  return <Button variant='contained' className={classes.addButton} startIcon={<AddIcon/>} onClick={props.onClick}> Add Task </Button>
-}
