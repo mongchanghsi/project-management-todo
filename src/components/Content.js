@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { folders, tasks } from '../data/Data';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
@@ -20,8 +19,8 @@ class Content extends Component {
     super(props);
 
     this.state = {
-      folderName: folders,
-      tasks: tasks,
+      folderName: [],
+      tasks: [],
       newFolderName: '',
       updateTaskFolder: ''
     };
@@ -37,65 +36,102 @@ class Content extends Component {
     this.setState({ newFolderName: value })
   }
 
-  createNewFolder(){
-    let newFolder = {
-      'id': this.state.tasks.length + 2,
-      'title': this.state.newFolderName,
-      'tasks': []
-    }
-    let newFolderList = [...this.state.folderName]
-    let newTaskList = [...this.state.tasks]
-    newFolderList.push(this.state.newFolderName)
-    newTaskList.push(newFolder)
-    this.setState({ tasks: newTaskList, folderName: newFolderList, newFolderName: '' })
+  async createNewFolder(){
+    const requestOptions = {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: this.state.newFolderName })
+    };
+
+    await fetch('https://eric-todo-node.herokuapp.com/api/folder/create', requestOptions)
+      .then(res => res.json())
+      .then(json => {
+        console.log(json)
+        console.log('Task Folder is successfully created')
+      })
+      .catch(error => console.error('Error occured', error.message ))
+
+    this.fetchData();
   }
 
   updateTaskFolder(value){
     this.setState({ updateTaskFolder: value })
   }
 
-  createNewTask(title, taskName){
-    let tasks = this.state.tasks
-    let proneToUpdateTaskList;
+  async createNewTask(id, taskName){
+    const requestOptions = {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id: id, name: taskName })
+    };
 
-    for (let i=0; i<tasks.length; i++){
-      if (tasks[i].title == title){
-        proneToUpdateTaskList = tasks[i].tasks
-        proneToUpdateTaskList.push(taskName)
-        tasks[i].tasks = proneToUpdateTaskList
-        break
-      }
-    }
+    await fetch('https://eric-todo-node.herokuapp.com/api/folder/update', requestOptions)
+      .then(res => res.json())
+      .then(json => {
+        console.log(json)
+        console.log('New Task is successfully updated')
+      })
+      .catch(error => console.error('Error occured', error.message ))
 
-    this.setState({ tasks: tasks, newTaskName: '' })
+    this.fetchData();
   }
 
-  deleteTaskFolder(){
-    let folderName = this.state.folderName
-    let tasks = this.state.tasks
-    for (let i=0; i<tasks.length; i++){
-      if (tasks[i].title == this.state.updateTaskFolder){
-        folderName.splice(i, 1)
-        tasks.splice(i , 1)
-        break
-      }
-    }
-    this.setState({ tasks: tasks, folderName: folderName })
+  async deleteTaskFolder(){
+    const requestOptions = {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id: this.state.updateTaskFolder })
+    };
+
+    await fetch('https://eric-todo-node.herokuapp.com/api/folder/delete', requestOptions)
+      .then(res => res.json())
+      .then(json => {
+        console.log(json)
+        console.log('Task Folder is successfully deleted')
+      })
+      .catch(error => console.error('Error occured', error.message ))
+
+    this.fetchData();
   }
 
-  deleteTask(title, task){
-    let tasks = this.state.tasks
-    for (let i=0; i<tasks.length; i++){
-      if (tasks[i].title === title){
-        let listOfTasks = tasks[i].tasks;
-        for (let j=0; j<listOfTasks.length; j++){
-          if (listOfTasks[j] === task){
-            listOfTasks.splice(j, 1)
+  async deleteTask(id, task){
+    const requestOptions = {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id: id, name: task })
+    };
+
+    await fetch('https://eric-todo-node.herokuapp.com/api/folder/complete', requestOptions)
+      .then(res => res.json())
+      .then(json => {
+        console.log(json)
+        console.log('Task is successfully deleted')
+      })
+      .catch(error => console.error('Error occured', error.message ))
+
+    this.fetchData();
+  }
+
+  componentDidMount(){
+    this.fetchData();
+  }
+
+  async fetchData(){
+    await fetch('https://eric-todo-node.herokuapp.com/api/folder')
+      .then(res => res.json())
+      .then(json => {
+        let folderName = []
+        let folderDetails = {}
+        for (let i=0; i<json.length; i++){
+          folderDetails = {
+            "id": json[i]._id,
+            "name": json[i].name
           }
+          folderName.push(folderDetails)
         }
-      }
-    }
-    this.setState({ tasks: tasks })
+        this.setState({ tasks: json, folderName: folderName }, () => console.log(this.state.folderName))
+      })
+      .catch(error => console.log('Error occured'))
   }
 
   render(){
@@ -112,9 +148,15 @@ class Content extends Component {
           />
         </div>
         <Grid container spacing={5}>
-        { this.state.tasks.map((task, index) =>
-          <Grid item xs={12} sm={6} md={4} lg={3} id={index}>
-            <Item deleteTask={this.deleteTask} taskDetails={task} updateNewTaskName={this.updateNewTaskName} createNewTask={this.createNewTask} newTaskName={this.state.newTaskName}/>
+        { this.state.tasks.map((task) =>
+          <Grid item xs={12} sm={6} md={4} lg={3} key={task._id}>
+            <Item
+              deleteTask={this.deleteTask}
+              taskDetails={task}
+              updateNewTaskName={this.updateNewTaskName}
+              createNewTask={this.createNewTask}
+              newTaskName={this.state.newTaskName}
+            />
           </Grid>
         )}
         </Grid>

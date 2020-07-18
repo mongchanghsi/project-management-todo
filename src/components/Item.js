@@ -1,10 +1,7 @@
 import  React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
-import Card from '@material-ui/core/Card';
-import CardHeader from '@material-ui/core/CardHeader';
-import CardContent from '@material-ui/core/CardContent';
-import Collapse from '@material-ui/core/Collapse';
+import { Card, CardHeader, CardContent, Collapse } from '@material-ui/core';
 import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
@@ -57,16 +54,16 @@ class Item extends Component {
     this.setState({ expanded: !this.state.expanded })
   }
 
-  clearTask(title, task){
-    this.props.deleteTask(title, task)
+  clearTask(id, task){
+    this.props.deleteTask(id, task)
   }
 
   handleChange(e){
     this.setState({ newTaskName: e.target.value })
   }
 
-  onSubmit(title, taskName){
-    this.props.createNewTask(title, taskName)
+  onSubmit(id, taskName){
+    this.props.createNewTask(id, taskName)
     this.setState({ newTaskName: '' })
   }
 
@@ -75,7 +72,7 @@ class Item extends Component {
     return(
       <Card className={classes.root}>
         <CardHeader
-          title={this.props.taskDetails.title}
+          title={this.props.taskDetails.name}
           action={
             <IconButton
               className={clsx(classes.expand, {
@@ -94,7 +91,7 @@ class Item extends Component {
               <ListItem>
                 <ListItemText primary={task}/>
                 <ListItemSecondaryAction>
-                  <IconButton edge="end" aria-label="delete" onClick={()=>this.clearTask(this.props.taskDetails.title, task)}>
+                  <IconButton edge="end" aria-label="delete" onClick={()=>this.clearTask(this.props.taskDetails._id, task)}>
                     <DeleteIcon />
                   </IconButton>
                 </ListItemSecondaryAction>
@@ -102,7 +99,7 @@ class Item extends Component {
             )}
             </List>
             <TextField className={classes.margin} id="taskname" label="Task Name" variant="outlined" value={this.state.newTaskName} onChange={this.handleChange}/>
-            <AddTask onClick={()=>this.onSubmit(this.props.taskDetails.title, this.state.newTaskName)}/>
+            <AddTask onClick={()=>this.onSubmit(this.props.taskDetails._id, this.state.newTaskName)}/>
           </CardContent>
         </Collapse>
       </Card>

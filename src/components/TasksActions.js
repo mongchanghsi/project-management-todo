@@ -100,7 +100,7 @@ class TasksActions extends Component {
                 <FormLabel component="legend">Select Task Folder</FormLabel>
                 <RadioGroup aria-label="taskfolder" name="taskfolder" onChange={this.handleRadioChange}>
                   { this.props.folders.map((folder) =>
-                    <FormControlLabel value={folder} control={<Radio />} label={folder} />
+                    <FormControlLabel value={folder.id} control={<Radio />} label={folder.name} />
                   )}
                 </RadioGroup>
               </FormControl>
