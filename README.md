@@ -10,6 +10,7 @@ As I handle a few personal projects, I tend to have several thoughts in mind on 
 2. Add task specifically to folder
 3. Delete task
 4. Delete task folder
+5. NodeJS, ExpressJS and MongoDB for APIs and storing of data
 
 ### Future Update
-Currently working on APIs to GET/POST/DELETE using NodeJS, ExpressJS and with MongoDB as database. Do look forward to the update in the future. Furthermore, there will be personal account functionality for the public to use.
+Working on personal account features for expansion.
